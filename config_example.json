@@ -1,0 +1,7 @@
+{
+	"stage": "dev",
+	"mainRegion": "eu-west-1",
+	"replicatedRegions": ["us-east-1"],
+	"domain": "domain123.com",
+	"hostedZone": "ASDF2323A"
+}
