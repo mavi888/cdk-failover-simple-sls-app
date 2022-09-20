@@ -5,6 +5,8 @@ _AWS Services used_: AWS DynamoDB, Route53, API Gateway
 
 ## Summary of the demo
 
+Multi-region serverless application, failover to a different region based on latency.
+
 In this demo you will see:
 
 - How to configure a global table using DynamoDB
