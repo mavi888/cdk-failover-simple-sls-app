@@ -5,7 +5,6 @@ import { GlobalApplicationStack } from '../lib/global-app-stack';
 
 import * as config from '../config.json';
 
-const mainRegion = config.mainRegion;
 const replicatedRegions = config.replicatedRegions;
 const domain = config.domain;
 const hostedZoneId = config.hostedZone;

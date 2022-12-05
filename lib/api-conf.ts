@@ -81,7 +81,7 @@ export function createRestApi(
 		...errorResponses,
 	];
 
-	const getIntegration = new AwsIntegration({
+	const getItemIntegration = new AwsIntegration({
 		action: 'GetItem',
 		options: {
 			credentialsRole: createPolicy(scope, table, 'GetItem'),
@@ -100,7 +100,7 @@ export function createRestApi(
 		service: 'dynamodb',
 	});
 
-	const createIntegration = new AwsIntegration({
+	const putItemIntegration = new AwsIntegration({
 		action: 'PutItem',
 		options: {
 			credentialsRole: createPolicy(scope, table, 'PutItem'),
@@ -150,22 +150,10 @@ export function createRestApi(
 	const { root } = api;
 
 	const allResources = root.addResource('data');
-	allResources.addMethod('POST', createIntegration, METHOD_OPTIONS);
+	allResources.addMethod('POST', putItemIntegration, METHOD_OPTIONS);
+
 	const oneResource = allResources.addResource('{pk}');
-	oneResource.addMethod('GET', getIntegration, METHOD_OPTIONS);
+	oneResource.addMethod('GET', getItemIntegration, METHOD_OPTIONS);
 
 	return api;
-}
-
-export function addHealthCheckEndpoint(api: RestApi) {
-	const healthCheckIntegration = new MockIntegration({
-		integrationResponses: [{ statusCode: '200' }],
-		passthroughBehavior: PassthroughBehavior.NEVER,
-		requestTemplates: {
-			'application/json': JSON.stringify({ statusCode: 200 }),
-		},
-	});
-
-	const health = api.root.addResource('health');
-	health.addMethod('GET', healthCheckIntegration, METHOD_OPTIONS);
 }

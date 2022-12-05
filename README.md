@@ -1,18 +1,18 @@
-# CDK Demo App for a Global Serverless Applications
+# Latency based routing for Serverless Application
 
-_Infrastructure as code framework used_: AWS CDK
-_AWS Services used_: AWS DynamoDB, Route53, API Gateway
+- _Infrastructure as code framework used_: AWS CDK
+- _AWS Services used_: AWS DynamoDB, Amazon Route53, AWS API Gateway
 
 ## Summary of the demo
 
 Multi-region serverless application, failover to a different region based on latency.
 
+![Architecture diagram](/diagrams/architecture.png)
+
 In this demo you will see:
 
 - How to configure a global table using DynamoDB
 - How to create a API Gateway that integrates directly to DynamoDB
-- How to attach a healthcheck to the API Gateway
-- How to shift traffic to one place or another depending on the location of the user
 - How to send traffic to the right stack depending on the latency.
 
 This demo is part of a video posted in FooBar Serverless channel. You can check the video to see the whole demo.
@@ -28,7 +28,7 @@ Important: this application uses various AWS services and there are costs associ
 
 ## Deploy this demo
 
-1. Configure this project by changing the `config.json`file to match your project. For running this demo you need to have a domain in the account that you are going to deploy this app.
+1. Configure this project by changing the `config.json` file to match your project. For running this demo you need to have a domain in the account that you are going to deploy this app.
 
 1. Deploy the project to the cloud, this will deploy the app in 2 regions - Ireland and Virginia.
 
@@ -37,9 +37,7 @@ cdk synth
 cdk deploy --all
 ```
 
-3. When asked about functions that may not have authorization defined, answer (y)es. The access to those functions will be open to anyone, so keep the app deployed only for the time you need this demo running.
-
-## How to test
+## How to test this demo
 
 After deploying this application.
 
@@ -93,10 +91,6 @@ To delete the app in all the regions. You might need to delete manually the Repl
 cdk destroy --all
 ```
 
-## Links related to this code
-
-- Video with more details:
-
 ### AWS CDK useful commands
 
 - `npm run build` compile typescript to js
@@ -105,3 +99,7 @@ cdk destroy --all
 - `cdk deploy` deploy this stack to your default AWS account/region
 - `cdk diff` compare deployed stack with current state
 - `cdk synth` emits the synthesized CloudFormation template
+
+## Links related to this code
+
+[Learn more about building multi-region serverless applications with AWS](https://blog.marcia.dev/global-event-driven-applications)

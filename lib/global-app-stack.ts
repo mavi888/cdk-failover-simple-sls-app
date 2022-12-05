@@ -1,8 +1,8 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { addHealthCheckEndpoint, createRestApi } from './api-conf';
+import { createRestApi } from './api-conf';
 import { createTable } from './persistance';
-import { addApiGateWayDomainName } from './domain-conf';
+import { addApiGatewayDomainName } from './domain-conf';
 
 interface GlobalApplicationStackProps extends StackProps {
 	hostedZoneId: string;
@@ -28,11 +28,11 @@ export class GlobalApplicationStack extends Stack {
 			replicationRegions: props.replicationRegions,
 		});
 
-		// Create API integration with Table and add Health Check
+		// Create API integration with Table
 		const restApi = createRestApi(this, { table, region });
-		addHealthCheckEndpoint(restApi);
 
-		addApiGateWayDomainName(this, {
+		// Configure the domain name with the api gateway
+		addApiGatewayDomainName(this, {
 			domainName: props.domainName,
 			restApi,
 			hostedZoneId: props.hostedZoneId,

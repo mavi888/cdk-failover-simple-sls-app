@@ -1,4 +1,3 @@
-import { Fn } from 'aws-cdk-lib';
 import {
 	DomainName,
 	RestApi,
@@ -7,7 +6,6 @@ import {
 import { DnsValidatedCertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import {
 	ARecord,
-	CfnHealthCheck,
 	CfnRecordSet,
 	HostedZone,
 	RecordTarget,
@@ -15,16 +13,16 @@ import {
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 import { Construct } from 'constructs';
 
-interface AddApiGateWayDomainNameProps {
+interface AddApiGatewayDomainNameProps {
 	region: string;
 	domainName: string;
 	restApi: RestApi;
 	hostedZoneId: string;
 }
 
-export function addApiGateWayDomainName(
+export function addApiGatewayDomainName(
 	scope: Construct,
-	props: AddApiGateWayDomainNameProps
+	props: AddApiGatewayDomainNameProps
 ) {
 	const hostedZone = HostedZone.fromHostedZoneAttributes(scope, 'HostedZone', {
 		hostedZoneId: props.hostedZoneId,
@@ -48,33 +46,16 @@ export function addApiGateWayDomainName(
 		securityPolicy: SecurityPolicy.TLS_1_2,
 	});
 
-	// We need to call addBasePathMapping, so that the custom domain gets connected with our rest api
+	// Connects the custom domain gets with the rest api
 	apigwDomainName.addBasePathMapping(props.restApi);
-
-	const executeApiDomainName = Fn.join('.', [
-		props.restApi.restApiId,
-		'execute-api',
-		props.region,
-		Fn.ref('AWS::URLSuffix'),
-	]);
-
-	const healthCheck = new CfnHealthCheck(scope, `${props.region}HealthCheck`, {
-		healthCheckConfig: {
-			type: 'HTTPS',
-			fullyQualifiedDomainName: executeApiDomainName,
-			port: 443,
-			requestInterval: 30,
-			resourcePath: `/${props.restApi.deploymentStage.stageName}/health`,
-		},
-	});
 
 	const dnsRecord = new ARecord(scope, `${props.region}`, {
 		zone: hostedZone,
 		target: RecordTarget.fromAlias(new ApiGatewayDomain(apigwDomainName)),
 	});
 
+	// This is used to configure the record with latency routing policy
 	const recordSet = dnsRecord.node.defaultChild as CfnRecordSet;
 	recordSet.region = props.region;
-	recordSet.healthCheckId = healthCheck.attrHealthCheckId;
 	recordSet.setIdentifier = `${props.region}Api`;
 }
